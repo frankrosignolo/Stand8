@@ -429,8 +429,16 @@ html.stage .stage-area-icon{width:46px;height:46px;border-radius:12px;background
 html.stage .stage-area-name{font-family:var(--head);font-weight:500;font-size:18px;color:var(--color-black);margin-bottom:3px;}
 html.stage .stage-area-desc{font-size:14px;color:var(--color-dark-gray);line-height:1.45;}
 
-/* results in stage: centered, on the soft backdrop */
-html.stage main#app .results{max-width:1040px;margin:0 auto;}
+/* results slide */
+html.stage .stage-results .stage-title{font-size:clamp(26px,2vw,34px);line-height:1.06;}
+html.stage .stage-result-stats{margin-top:auto;padding-top:30px;display:flex;flex-direction:column;}
+html.stage .stage-rstat{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-top:1px solid rgba(255,255,255,.22);}
+html.stage .stage-rstat:last-child{border-bottom:1px solid rgba(255,255,255,.22);}
+html.stage .stage-rstat-k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:600;}
+html.stage .stage-rstat-v{font-family:var(--head);font-weight:500;font-size:18px;color:#fff;text-align:right;}
+html.stage .stage-result-lead{font-size:18px;color:var(--color-black);line-height:1.5;margin-bottom:22px;}
+html.stage .stage-results .interp{margin-top:0;}
+html.stage .stage-results .cta{margin-top:28px;}
 
 @media(max-width:900px){
   html.stage .stage{grid-template-columns:1fr;height:auto;min-height:0;}
@@ -1028,33 +1036,19 @@ function renderResults(){
   var secMap={}; SECTIONS.forEach(function(s){ secMap[s.id]=s; });
   var scoreMap={}; r.scores.forEach(function(s){ scoreMap[s.id]=s.score; });
 
-  var html='<div class="results">';
-
-  // hero
-  html+='<div class="res-hero"><div class="res-hero-top">'
-    +'<span class="eyebrow">Your Salesforce leak profile</span>'
-    +'<h2>'+esc(oc.h)+'</h2>'
-    +'<p>'+esc(oc.b)+'</p>'
-    +'<div class="res-summary">'
-      + stat("Overall finding", overallLabel.name)
-      + stat("Primary leak", r.primary.title)
-      + stat("Secondary leak", r.secondary.title)
-    +'</div>'
-  +'</div></div>';
-
   // interpretation
   var interp="Your answers suggest Salesforce may be losing value most through "+r.primary.title.toLowerCase()
     +", with "+r.secondary.title.toLowerCase()+" close behind. The most visible problem is not always the root cause \u2014 a deeper Health Check can confirm what is driving the issue and what to fix first.";
-  html+='<div class="interp"><p>'+esc(interp)+'</p></div>';
+  var interpHtml='<div class="interp"><p>'+esc(interp)+'</p></div>';
 
   // section cards
-  html+='<div class="sec-label">Section findings</div><div class="res-cards">';
+  var cardsHtml='<div class="sec-label">Section findings</div><div class="res-cards">';
   r.ranked.forEach(function(row){
     var score=row.score, lab=labelFor(score), copy=SECTION_COPY[row.id];
     var flag = row.id===r.primary.id ? '<span class="flag primary">Primary leak</span>'
              : row.id===r.secondary.id ? '<span class="flag secondary">Secondary leak</span>' : '';
     var cls = row.id===r.primary.id ? ' primary' : row.id===r.secondary.id ? ' secondary' : '';
-    html+='<div class="res-card'+cls+'">'
+    cardsHtml+='<div class="res-card'+cls+'">'
       +'<div class="res-card-head">'
         +'<div class="res-card-name"><h4>'+esc(row.title)+'</h4>'+flag+'</div>'
         +'<span class="badge '+lab.key+'">'+esc(lab.name)+' \u00b7 '+score+'</span>'
@@ -1064,11 +1058,11 @@ function renderResults(){
       +'<p class="first-look"><b>First look:</b> <span>'+esc(copy.first)+'</span></p>'
     +'</div>';
   });
-  html+='</div>';
+  cardsHtml+='</div>';
 
   // CTA
   var ctaBody = (answers.q16 && CTA_PERSONALIZE[answers.q16]) ? CTA_PERSONALIZE[answers.q16] : CTA_DEFAULT;
-  html+='<div class="cta">'
+  var ctaHtml='<div class="cta">'
     +'<h3>Ready to find the right Salesforce fixes?</h3>'
     +'<p>'+esc(ctaBody)+'</p>'
     +'<div class="cta-row">'
@@ -1077,10 +1071,43 @@ function renderResults(){
     +'</div>'
   +'</div>';
 
-  html+='<div class="nav"><button class="btn btn-ghost" id="restart"><span class="material-symbols-outlined">refresh</span> Start over</button></div>';
+  var restartNav='<button class="btn btn-ghost" id="restart"><span class="material-symbols-outlined">refresh</span> Start over</button>';
 
-  html+='</div>';
-  app.innerHTML=html;
+  if(getMode()==="stage"){
+    var statRows = stageStat("Overall finding", overallLabel.name)
+      + stageStat("Primary leak", r.primary.title)
+      + stageStat("Secondary leak", r.secondary.title);
+    app.innerHTML =
+    '<div class="stage stage-results">'
+      +'<aside class="stage-aside">'
+        +'<div class="stage-brand">Your Salesforce leak profile</div>'
+        +'<h2 class="stage-title">'+esc(oc.h)+'</h2>'
+        +'<div class="stage-result-stats">'+statRows+'</div>'
+      +'</aside>'
+      +'<div class="stage-main">'
+        +'<div class="stage-main-inner">'
+          +'<p class="stage-result-lead">'+esc(oc.b)+'</p>'
+          + interpHtml + cardsHtml + ctaHtml
+        +'</div>'
+        +'<div class="stage-nav">'+restartNav+'</div>'
+      +'</div>'
+    +'</div>';
+  } else {
+    app.innerHTML='<div class="results">'
+      +'<div class="res-hero"><div class="res-hero-top">'
+        +'<span class="eyebrow">Your Salesforce leak profile</span>'
+        +'<h2>'+esc(oc.h)+'</h2>'
+        +'<p>'+esc(oc.b)+'</p>'
+        +'<div class="res-summary">'
+          + stat("Overall finding", overallLabel.name)
+          + stat("Primary leak", r.primary.title)
+          + stat("Secondary leak", r.secondary.title)
+        +'</div>'
+      +'</div></div>'
+      + interpHtml + cardsHtml + ctaHtml
+      +'<div class="nav">'+restartNav+'</div>'
+    +'</div>';
+  }
 
   document.getElementById("schedule").addEventListener("click", function(){ openContact(r,overallLabel); });
   document.getElementById("sendme").addEventListener("click", function(){ openSendResults(r,overallLabel); });
@@ -1089,6 +1116,7 @@ function renderResults(){
 }
 
 function stat(k,v){ return '<div class="res-stat"><div class="k">'+esc(k)+'</div><div class="v">'+esc(v)+'</div></div>'; }
+function stageStat(k,v){ return '<div class="stage-rstat"><span class="stage-rstat-k">'+esc(k)+'</span><span class="stage-rstat-v">'+esc(v)+'</span></div>'; }
 
 /* ============================ MODALS ============================ */
 

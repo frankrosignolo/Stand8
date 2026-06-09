@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<script>try{if(localStorage.getItem('s8_mode')==='present')document.documentElement.classList.add('present');}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Salesforce Leak Finder — Stand8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -225,13 +226,150 @@ footer p{font-size:13px;color:var(--color-dark-gray);}
   .intro-panel{padding:28px 22px;}
   .q .cards,.q .scale{margin-top:20px;}
 }
+
+/* ---- mode toggle (in top bar) ---- */
+.topbar-right{display:flex;align-items:center;gap:18px;}
+.mode-toggle{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-weight:600;font-size:13px;
+  color:var(--color-dark-gray);background:transparent;border:2px solid var(--color-light-gray);border-radius:25px;
+  padding:8px 14px;cursor:pointer;transition:border-color .15s ease,color .15s ease,background .15s ease;}
+.mode-toggle:hover{border-color:var(--color-dark-gray);color:var(--color-black);}
+.mode-toggle .material-symbols-outlined{font-size:18px;}
+
+/* =====================================================================
+   PRESENTATION MODE — full-screen, immersive brand gradient
+   (scoped under html.present; standard mode is untouched)
+   ===================================================================== */
+html.present{
+  --t-h1:clamp(48px,7vw,86px);
+  --t-h3:clamp(30px,4.4vw,44px);
+  --t-body:18px;
+}
+html.present{ background:#00007E; }
+html.present body{ color:#fff; background:transparent; }
+/* fixed full-screen backdrop so the gradient always fills the viewport while scrolling */
+html.present body::before{
+  content:"";position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(85% 85% at 88% -12%, rgba(171,177,255,.45), transparent 60%),
+    radial-gradient(70% 70% at -12% 112%, rgba(61,156,250,.40), transparent 60%),
+    linear-gradient(135deg,#00007E 0%, #3a13c9 48%, #5215FC 100%);
+}
+html.present .shell{min-height:100vh;}
+html.present .topbar,
+html.present footer{max-width:1080px;}
+html.present .wrap{max-width:1080px;}
+html.present .topbar{padding:26px 32px;}
+html.present .brand-logo path{fill:#fff;}
+html.present .tagline{color:rgba(255,255,255,.85);}
+html.present .mode-toggle{color:#fff;border-color:rgba(255,255,255,.4);}
+html.present .mode-toggle:hover{border-color:#fff;background:rgba(255,255,255,.12);}
+html.present footer{border-top-color:rgba(255,255,255,.18);}
+html.present footer p{color:rgba(255,255,255,.65);}
+
+/* headings + body text turn white */
+html.present h1,html.present h2,html.present h3,html.present h4{color:#fff;}
+html.present p{color:rgba(255,255,255,.85);}
+
+/* glassy containers */
+html.present .panel,
+html.present .section-head,
+html.present .q,
+html.present .interp,
+html.present .res-card,
+html.present .res-hero{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.22);
+  border-radius:22px;
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+}
+html.present .panel,html.present .section-head,html.present .q{padding:34px 38px;}
+
+/* intro slide */
+html.present .intro-panel{padding:56px 56px;}
+html.present .eyebrow{color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.4);}
+html.present .intro .lede{color:rgba(255,255,255,.92);font-size:22px;}
+html.present .intro .support{color:rgba(255,255,255,.78);}
+html.present .intro .accent{background:rgba(255,255,255,.92);}
+html.present .intro .micro{color:rgba(255,255,255,.7);}
+html.present .pillar{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.25);color:#fff;}
+html.present .pillar .material-symbols-outlined{color:#fff;}
+
+/* progress */
+html.present .progress-label{color:#fff;}
+html.present .progress-count{color:rgba(255,255,255,.72);}
+html.present .bar{background:rgba(255,255,255,.18);}
+html.present .bar > span{background:#fff;}
+
+/* section header */
+html.present .section-icon{width:64px;height:64px;border-radius:18px;}
+html.present .section-icon .material-symbols-outlined{font-size:34px;}
+html.present .section-desc{color:rgba(255,255,255,.82);}
+
+/* questions — larger type + roomier */
+html.present .q-title{color:#fff;font-size:clamp(23px,2.7vw,30px);}
+html.present .q-hint{color:rgba(255,255,255,.72);font-size:15px;}
+html.present .q{margin-top:20px;}
+html.present .q .cards,html.present .q .scale{margin-top:28px;}
+
+/* option cards — bigger tap targets, glassy */
+html.present .cards{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+html.present .cards.freq{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+html.present .card{
+  background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.28);color:#fff;
+  font-size:18px;padding:20px 22px;border-radius:16px;gap:12px;
+}
+html.present .card:hover{border-color:#fff;background:rgba(255,255,255,.18);}
+html.present .card .tick{width:24px;height:24px;border-color:rgba(255,255,255,.55);}
+html.present .card.selected{background:#fff;border-color:#fff;color:var(--color-cobalt-dark);}
+html.present .card.selected .tick{background:var(--color-cobalt);border-color:var(--color-cobalt);}
+html.present .card.selected .tick .material-symbols-outlined{font-size:17px;}
+
+/* scale */
+html.present .scale-track{background:rgba(255,255,255,.12);border-radius:18px;padding:8px;}
+html.present .scale-stop{color:rgba(255,255,255,.8);font-size:15px;padding:16px 8px;border-radius:12px;}
+html.present .scale-stop:hover{color:#fff;}
+html.present .scale-stop.selected{background:#fff;color:var(--color-cobalt-dark);box-shadow:0 4px 14px rgba(0,0,0,.18);}
+html.present .scale-ends{color:rgba(255,255,255,.7);}
+
+/* buttons — solid white primary pops on the gradient */
+html.present .btn{font-size:18px;padding:18px 30px;border-radius:16px;}
+html.present .btn-primary{background:#fff;color:var(--color-cobalt);box-shadow:0 12px 34px rgba(0,0,0,.28);}
+html.present .btn-primary:hover{box-shadow:0 16px 44px rgba(0,0,0,.34);}
+html.present .btn-ghost{color:#fff;border-color:rgba(255,255,255,.4);}
+html.present .btn-ghost:hover{border-color:#fff;color:#fff;background:rgba(255,255,255,.12);}
+html.present .nav{border-top-color:rgba(255,255,255,.18);}
+
+/* results in presentation */
+html.present .res-hero{overflow:hidden;}
+html.present .res-hero-top{background:transparent;}
+html.present .interp p{color:rgba(255,255,255,.85);}
+html.present .sec-label{color:rgba(255,255,255,.72);}
+html.present .res-card p{color:rgba(255,255,255,.82);}
+html.present .res-card.primary{border-color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+html.present .res-card.secondary{border-color:var(--color-daybreak);}
+html.present .meter{background:rgba(255,255,255,.18);}
+html.present .first-look{color:#fff;}
+html.present .first-look span{color:rgba(255,255,255,.78);}
+html.present .cta{border-color:rgba(255,255,255,.32);}
+
+@media(max-width:560px){
+  html.present .panel,html.present .section-head,html.present .q{padding:24px 22px;}
+  html.present .intro-panel{padding:32px 24px;}
+  html.present .q .cards,html.present .q .scale{margin-top:22px;}
+}
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="topbar">
     <svg class="brand-logo" role="img" aria-label="Stand8" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 3840 1368.86803"> <path fill="#a7a4e0" d="M3736.4785,285.57654h92.81238c5.91448,0,10.70912-4.79464,10.70912-10.70912V67.82443c0-5.91448-4.79464-10.70912-10.70912-10.70912h-92.81238c-5.91448,0-10.70912-4.79464-10.70912-10.70912V10.70912c0-5.91448-4.79464-10.70912-10.70912-10.70912h-207.04299c-5.91448,0-10.70912,4.79464-10.70912,10.70912v35.69707c0,5.91448-4.79464,10.70912-10.70912,10.70912h-92.81238c-5.91448,0-10.70912,4.79464-10.70912,10.70912v207.04299c0,5.91448,4.79464,10.70912,10.70912,10.70912h92.81238c5.91448,0,10.70912,4.79464,10.70912,10.70912v35.69707c0,5.91448-4.79464,10.70912-10.70912,10.70912h-92.81238c-5.91448,0-10.70912,4.79464-10.70912,10.70912v207.04299c0,5.91448,4.79464,10.70912,10.70912,10.70912h92.81238c5.91448,0,10.70912,4.79464,10.70912,10.70912v35.69707c0,5.91448,4.79464,10.70912,10.70912,10.70912h207.04299c5.91448,0,10.70912-4.79464,10.70912-10.70912v-35.69707c0-5.91448,4.79464-10.70912,10.70912-10.70912h92.81238c5.91448,0,10.70912-4.79464,10.70912-10.70912v-207.04299c0-5.91448-4.79464-10.70912-10.70912-10.70912h-92.81238c-5.91448,0-10.70912-4.79464-10.70912-10.70912v-35.69707c0-5.91448,4.79464-10.70912,10.70912-10.70912ZM3725.76938,560.44396c0,5.91448-4.79464,10.70912-10.70912,10.70912h-103.5215v.01307h-103.5215c-5.91448,0-10.70912-4.79464-10.70912-10.70912v-207.04299c0-5.91448,4.79464-10.70912,10.70912-10.70912h103.5215v-.01307h103.5215c5.91448,0,10.70912,4.79464,10.70912,10.70912v207.04299ZM3715.06026,285.56347h-103.5215v.01307h-103.5215c-5.91448,0-10.70912-4.79464-10.70912-10.70912V67.82443c0-5.91448,4.79464-10.70912,10.70912-10.70912h103.5215v-.01307h103.5215c5.91448,0,10.70912,4.79464,10.70912,10.70912v207.04299c0,5.91448-4.79464,10.70912-10.70912,10.70912Z"/> <g> <path d="M2399.41226,663.09704c-40.45384-24.26121-87.30832-36.39284-140.58397-36.39284-57.0881,0-106.32947,12.62257-147.71999,37.82251-21.26787,12.9606-39.57943,29.13371-54.94383,48.50023-3.08671,3.89073-7.79187,6.14347-12.75831,6.14347h-12.21649c-5.91449,0-10.70914-4.79464-10.70914-10.70913v-70.33822h-114.18032v719.32818h114.18032v-388.2102c0-45.6713,9.02991-86.57089,27.11849-122.74189,18.06393-36.15046,43.28442-64.44802,75.64092-84.92143,32.33596-20.44876,68.97735-30.6865,109.89953-30.6865,54.23288,0,97.5214,18.79931,129.8779,56.37738,32.33596,37.59861,48.52653,87.30626,48.52653,149.14555v421.03709h115.60587v-439.5899c0-58.02684-11.19495-108.9382-33.53967-152.71561-22.36526-43.75276-53.76454-77.78542-94.19784-102.04868Z"/> <path d="M988.70394,627.41389v-219.07704h-114.17929v219.07806c0,5.91394-4.79419,10.70813-10.70813,10.70813h-139.14994c-5.26304-57.21649-22.73577-107.63794-52.43732-151.29005-30.46262-44.70998-71.60765-79.21098-123.45672-103.47424-51.87064-24.26327-110.61025-36.3949-176.26404-36.3949s-124.41497,11.19495-176.26404,33.54173c-51.87064,22.36731-91.83354,53.5201-119.88769,93.48506-28.07674,39.96085-42.1033,86.12514-42.1033,138.43947,0,59.94538,15.2087,108.24802,45.6713,144.86476,30.44,36.64139,67.08037,64.00433,109.89748,82.0662,42.8171,18.08858,99.90624,37.10973,171.26842,57.09221,58.98508,16.18852,105.37019,30.93094,139.15636,44.24164,33.76254,13.3374,61.83928,31.39928,84.2066,54.23699,22.34574,22.83565,33.5407,52.80732,33.5407,89.91705,0,58.04532-21.65453,101.57624-64.93998,130.59273-43.30804,29.03293-101.11098,43.53091-173.40881,43.53091-76.13493,0-136.79207-20.45082-181.97347-61.373-45.20297-40.89753-71.13931-96.56007-77.78439-166.98763H0c3.79088,67.57233,21.63091,126.80083,53.52112,177.69371,31.86762,50.90931,75.644,90.40593,131.30551,118.45699,55.66254,28.07982,120.60149,42.10535,194.81891,42.10535,70.40291,0,133.44591-11.19495,189.10845-33.53967,55.66254-22.34472,98.94799-54.94771,129.87893-97.7679,30.90834-42.81608,46.38511-93.70485,46.38511-152.7115,0-63.73524-15.47677-114.64865-46.38511-152.71561-30.93094-38.04641-68.75242-66.12212-113.46548-84.2066-44.73463-18.06393-103.25137-36.15046-175.55023-54.23699-58.0484-15.2087-103.47527-29.01239-136.30113-41.38846-32.82689-12.35553-60.43529-29.72722-82.78001-52.09454-22.36731-22.34472-33.5407-51.6036-33.5407-87.77666,0-48.52448,19.26765-86.56883,57.80396-114.17621,38.53529-27.58683,91.09714-41.39052,157.70917-41.39052,66.59046,0,120.60252,16.90335,161.99201,50.66692,40.332,32.92138,63.72394,76.45332,70.1758,130.59273h119.98898v101.33385h139.15033c5.91443,0,10.70903,4.79459,10.70903,10.70903v381.7799c0,45.6713,9.27743,85.63626,27.83127,119.88666,18.55384,34.25451,44.71306,60.43632,78.4982,78.50025,33.76357,18.08447,73.50258,27.11849,119.17491,27.11849h109.89748v-101.33385h-105.61566c-36.17203,0-64.47164-11.17441-84.92143-33.53967-20.47136-22.34883-30.68547-53.52215-30.68547-93.48711v-378.92455c0-5.9145,4.79465-10.70915,10.70915-10.70915h210.51341v-101.33385h-210.51341c-5.9145,0-10.70915-4.79465-10.70915-10.70915Z"/> <path d="M1702.65187,660.24387c-45.6713-22.34472-98.96956-33.53967-159.85059-33.53967-53.29825,0-102.53859,10.48217-147.71896,31.39928-45.20399,20.9397-81.84333,49.95414-109.89748,87.05977-28.07674,37.10973-44.49019,78.50025-49.24034,124.17156h109.89748c1.89595-26.62756,11.64173-51.13526,29.25889-73.50463,17.59457-22.34472,40.89958-39.96085,69.93457-52.80732,29.01342-12.84441,60.65714-19.26765,94.91164-19.26765,59.94333,0,107.04225,15.23335,141.29675,45.6713,34.25348,30.4626,51.3797,70.42756,51.3797,119.89077,0,12.37402-3.81245,21.89692-11.41783,28.54405-7.62592,6.66767-19.51311,9.99124-35.68006,9.99124h-161.27821c-87.55276,0-157.24186,20.22487-209.09093,60.65611-51.87064,40.45384-77.78439,94.91062-77.78439,163.41963,0,42.81608,10.21411,80.63654,30.68547,113.46548,20.44979,32.82484,49.46321,58.29182,87.06182,76.35575,37.57602,18.06393,81.57527,27.11849,132.01932,27.11849,56.13088,0,106.084-12.13163,149.86038-36.3949,23.40833-12.98033,43.39869-28.49321,60.00333-46.51477,4.33109-4.70068,10.39186-7.42025,16.78363-7.42025h8.12833c5.91449,0,10.70914,4.79464,10.70914,10.70913v68.20399h114.18032v-463.85317c0-53.27566-12.62462-99.90829-37.82457-139.86914-25.21946-39.96496-60.65714-71.11774-106.32741-93.48506ZM1502.83837,1271.81497c-43.77638,0-79.45644-10.92792-107.04225-32.82484-27.6084-21.87638-41.39052-51.38176-41.39052-88.49149,0-41.85475,15.92251-74.92814,47.81272-99.1914,31.86762-24.26327,74.43926-36.39284,127.73751-36.39284h202.6677v18.55281c0,74.21536-20.22589,132.51128-60.65714,174.83848-40.45281,42.34774-96.82916,63.50928-169.12803,63.50928Z"/> <path d="M3154.60866,342.68307v357.08105c0,5.91449-4.79464,10.70914-10.70914,10.70913h-11.73781c-7.15157,0-13.96855-2.83088-19.17563-7.73306-16.1234-15.17928-34.82951-28.63661-56.14532-40.35389-43.30907-23.77439-90.15944-35.68212-140.58397-35.68212-73.27868,0-135.83074,16.18852-187.68084,48.52448-51.87064,32.36061-91.34261,76.6043-118.4611,132.73313-27.11849,56.15553-40.67568,119.42243-40.67568,189.82534,0,70.42345,13.55719,133.69035,40.67568,189.82123,27.11849,56.15142,66.59046,100.39717,118.4611,132.73313,51.8501,32.36061,114.40216,48.52653,187.68084,48.52653,50.42454,0,97.27491-11.88514,140.58397-35.68006,21.69216-11.9146,40.68152-25.75523,56.99678-41.50286,4.67049-4.508,10.86316-7.08939,17.35435-7.08939h12.70763c5.91449,0,10.70914,4.79464,10.70914,10.70913v62.14639h114.17621V342.68307h-114.17621ZM3134.62618,1138.367c-19.98248,40.45384-47.8117,71.85312-83.49587,94.19784-35.68006,22.36937-77.31297,33.54378-124.88228,33.54378-72.32146,0-130.1244-24.26327-173.40881-72.7898-43.30907-48.52653-64.93895-113.68938-64.93895-195.53168,0-53.27771,9.99124-100.13013,29.96961-140.58397,19.98248-40.43124,47.81581-71.83052,83.49587-94.19784,35.68006-22.34472,77.29243-33.53967,124.88228-33.53967,72.30092,0,130.10385,24.26327,173.40881,72.7898,43.28853,48.52448,64.93895,113.70992,64.93895,195.53168,0,53.2962-9.98713,100.15068-29.96961,140.57987Z"/> </g> </svg>
-    <div class="tagline">Salesforce Leak Finder</div>
+    <div class="topbar-right">
+      <span class="tagline">Salesforce Leak Finder</span>
+      <button class="mode-toggle" id="modeToggle" type="button" aria-label="Toggle presentation mode">
+        <span class="material-symbols-outlined" id="modeIcon">slideshow</span>
+        <span id="modeLabel">Presentation</span>
+      </button>
+    </div>
   </div>
 
   <main id="app" class="wrap" role="main"></main>
@@ -872,6 +1010,26 @@ function goTo(s){
   if(sec){ renderSection(sec); return; }
   renderIntro();
 }
+
+/* ============================ DISPLAY MODE ============================ */
+
+var MODE_KEY = "s8_mode";
+function getMode(){ try{ return localStorage.getItem(MODE_KEY) || "standard"; }catch(e){ return "standard"; } }
+function applyMode(m){
+  document.documentElement.classList.toggle("present", m==="present");
+  var lbl=document.getElementById("modeLabel"), icon=document.getElementById("modeIcon");
+  if(lbl) lbl.textContent = (m==="present") ? "Standard view" : "Presentation";
+  if(icon) icon.textContent = (m==="present") ? "view_agenda" : "slideshow";
+}
+function setMode(m){ try{ localStorage.setItem(MODE_KEY,m); }catch(e){} applyMode(m); }
+(function initMode(){
+  applyMode(getMode());
+  var t=document.getElementById("modeToggle");
+  if(t) t.addEventListener("click", function(){
+    setMode(document.documentElement.classList.contains("present") ? "standard" : "present");
+    window.scrollTo(0,0);
+  });
+})();
 
 renderIntro();
 })();

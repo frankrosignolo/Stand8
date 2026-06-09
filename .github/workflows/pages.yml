@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - claude/stoic-lamport-6kg7zk
+  workflow_dispatch:
+
+# Allow the workflow to deploy to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress run.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        # enablement: true turns on GitHub Pages for the repo automatically
+        # (no manual Settings change required) and sets the build type to
+        # GitHub Actions.
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publish the repository root (index.html is the entry point).
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -246,6 +246,9 @@ html.present{
   --t-h3:clamp(30px,4.4vw,44px);
   --t-body:18px;
 }
+/* always reserve the scrollbar gutter so the centered container keeps a
+   constant width whether or not a given screen overflows */
+html.present, html.stage{ scrollbar-gutter: stable both-edges; }
 html.present{ background:#00007E; }
 html.present body{ color:#fff; background:transparent; }
 /* fixed full-screen backdrop so the gradient always fills the viewport while scrolling */
